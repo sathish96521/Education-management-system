@@ -52,7 +52,7 @@ export default function Login() {
     <Box>
       <Typography variant="h4" sx={{ fontWeight: 700 }} gutterBottom>Welcome Back</Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Sign in to access your EduSphere dashboard.
+        Sign in to access your GoSchool dashboard.
       </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}

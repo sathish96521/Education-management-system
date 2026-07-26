@@ -178,7 +178,7 @@ export default function Dashboard() {
   return (
     <Box>
       <PageHeader
-        title={`Welcome, ${user.name.split(' ')[0]}!`}
+        title={`Welcome, ${user.name}!`}
         subtitle={`You are signed in as ${roleLabel}. Here's your overview.`}
         breadcrumbs={[{ label: 'Dashboard' }]}
       />

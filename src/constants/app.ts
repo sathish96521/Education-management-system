@@ -1,6 +1,6 @@
 import type { Role } from '@/types';
 
-export const APP_NAME = 'EduSphere';
+export const APP_NAME = 'GoSchool';
 export const APP_TAGLINE = 'Education Management System';
 
 export const ROLES: Record<Role, string> = {

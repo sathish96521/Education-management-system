@@ -42,7 +42,7 @@ export default function Sidebar({ open, onClose, variant, collapsed = false }: S
               flexShrink: 0,
             }}
           >
-            E
+            G
           </Box>
           {!collapsed && (
             <Typography variant="h6" sx={{ fontWeight: 700 }} noWrap>

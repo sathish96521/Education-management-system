@@ -30,9 +30,9 @@ export default function AuthLayout() {
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 4 }}>
             <Box sx={{ width: 48, height: 48, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '1.5rem' }}>
-              E
+              G
             </Box>
-            <Box sx={{ fontSize: '1.75rem', fontWeight: 800 }}>EduSphere</Box>
+            <Box sx={{ fontSize: '1.75rem', fontWeight: 800 }}>GoSchool</Box>
           </Box>
           <Box sx={{ fontSize: '2rem', fontWeight: 700, lineHeight: 1.3, mb: 2 }}>
             The complete Education Management System

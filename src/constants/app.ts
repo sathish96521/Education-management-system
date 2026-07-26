@@ -1,6 +1,6 @@
 import type { Role } from '@/types';
 
-export const APP_NAME = 'EduSphere';
+export const APP_NAME = 'GoSchool';
 export const APP_TAGLINE = 'Education Management System';
 
 export const ROLES: Record<Role, string> = {
@@ -17,6 +17,7 @@ export const STORAGE_KEYS = {
   TOKEN: 'ems_token',
   USER: 'ems_user',
   THEME: 'ems_theme',
+  SESSION_EXPIRES: 'ems_session_expires',
 } as const;
 
 // Brand color palette - professional blue/teal scheme

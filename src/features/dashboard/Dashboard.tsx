@@ -1,4 +1,5 @@
-import { Card, Box, Typography, List, ListItem, ListItemIcon, ListItemText, Chip } from '@mui/material';
+import { Card, Box, Typography, List, ListItem, ListItemIcon, ListItemText, Chip, useTheme } from '@mui/material';
+import { memo } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, LineChart, Line, Area, AreaChart,
@@ -12,6 +13,18 @@ import {
   School, Person4, Payments, Class as ClassIcon, TrendingUp,
   Assignment, Quiz, Notifications, FactCheck, FamilyRestroom,
 } from '@mui/icons-material';
+import { mockStudents, mockTeachers, mockStaff, mockFees, mockAttendance } from '@/data/mockData';
+
+// Derived from actual mock data
+const totalStudents = mockStudents.length;
+const activeStudents = mockStudents.filter((s) => s.status === 'Active').length;
+const totalTeachers = mockTeachers.length;
+const totalFeeAmount = mockFees.reduce((s, f) => s + f.amount, 0);
+const totalFeePaid = mockFees.reduce((s, f) => s + f.paidAmount, 0);
+const presentCount = mockAttendance.filter((a) => a.status === 'Present').length;
+const absentCount = mockAttendance.filter((a) => a.status === 'Absent').length;
+const lateCount = mockAttendance.filter((a) => a.status === 'Late').length;
+const attendanceRate = mockAttendance.length > 0 ? Math.round((presentCount / mockAttendance.length) * 100) : 0;
 
 const enrollmentTrend = [
   { month: 'Jan', students: 420, teachers: 28 },
@@ -24,9 +37,9 @@ const enrollmentTrend = [
 ];
 
 const attendanceData = [
-  { name: 'Present', value: 92, color: '#2e7d32' },
-  { name: 'Absent', value: 5, color: '#d32f2f' },
-  { name: 'Late', value: 3, color: '#ed6c02' },
+  { name: 'Present', value: presentCount, color: '#2e7d32' },
+  { name: 'Absent', value: absentCount, color: '#d32f2f' },
+  { name: 'Late', value: lateCount, color: '#ed6c02' },
 ];
 
 const performanceData = [
@@ -58,9 +71,9 @@ const configs: Record<Role, DashboardConfig> = {
   super_admin: {
     stats: [
       { title: 'Total Institutions', value: '12', icon: <School />, color: '#1976d2', trend: 8 },
-      { title: 'Total Students', value: '5,420', icon: <School />, color: '#00897b', trend: 12 },
-      { title: 'Total Staff', value: '640', icon: <Person4 />, color: '#f57c00', trend: 5 },
-      { title: 'Revenue (Monthly)', value: '$1.2M', icon: <Payments />, color: '#2e7d32', trend: 15 },
+      { title: 'Total Students', value: String(totalStudents), icon: <School />, color: '#00897b', trend: 12 },
+      { title: 'Total Staff', value: String(totalTeachers + mockStaff.length), icon: <Person4 />, color: '#f57c00', trend: 5 },
+      { title: 'Revenue (Monthly)', value: `$${totalFeePaid.toLocaleString()}`, icon: <Payments />, color: '#2e7d32', trend: 15 },
     ],
     charts: ['enrollment', 'fees', 'attendance', 'performance'],
     activities: [
@@ -71,9 +84,9 @@ const configs: Record<Role, DashboardConfig> = {
   },
   admin: {
     stats: [
-      { title: 'Total Students', value: '540', icon: <School />, color: '#1976d2', trend: 12 },
-      { title: 'Total Teachers', value: '38', icon: <Person4 />, color: '#00897b', trend: 5 },
-      { title: 'Fee Collected', value: '$62K', icon: <Payments />, color: '#2e7d32', trend: 15 },
+      { title: 'Total Students', value: String(totalStudents), icon: <School />, color: '#1976d2', trend: 12 },
+      { title: 'Total Teachers', value: String(totalTeachers), icon: <Person4 />, color: '#00897b', trend: 5 },
+      { title: 'Fee Collected', value: `$${(totalFeePaid / 1000).toFixed(0)}K`, icon: <Payments />, color: '#2e7d32', trend: 15 },
       { title: 'Active Classes', value: '24', icon: <ClassIcon />, color: '#f57c00', trend: 3 },
     ],
     charts: ['enrollment', 'fees', 'attendance', 'performance'],
@@ -85,9 +98,9 @@ const configs: Record<Role, DashboardConfig> = {
   },
   principal: {
     stats: [
-      { title: 'Total Students', value: '540', icon: <School />, color: '#1976d2', trend: 8 },
-      { title: 'Total Teachers', value: '38', icon: <Person4 />, color: '#00897b', trend: 4 },
-      { title: 'Avg Attendance', value: '92%', icon: <FactCheck />, color: '#2e7d32', trend: 2 },
+      { title: 'Total Students', value: String(totalStudents), icon: <School />, color: '#1976d2', trend: 8 },
+      { title: 'Total Teachers', value: String(totalTeachers), icon: <Person4 />, color: '#00897b', trend: 4 },
+      { title: 'Avg Attendance', value: `${attendanceRate}%`, icon: <FactCheck />, color: '#2e7d32', trend: 2 },
       { title: 'Pass Rate', value: '94%', icon: <Quiz />, color: '#f57c00', trend: 6 },
     ],
     charts: ['enrollment', 'attendance', 'performance', 'fees'],
@@ -156,14 +169,16 @@ const configs: Record<Role, DashboardConfig> = {
 
 export default function Dashboard() {
   const user = useAppSelector((s) => s.auth.user);
+  const theme = useTheme();
   if (!user) return null;
   const config = configs[user.role] as DashboardConfig;
   const roleLabel = ROLES[user.role];
+  const gridColor = theme.palette.mode === 'dark' ? '#334155' : '#eee';
 
   return (
     <Box>
       <PageHeader
-        title={`Welcome, ${user.name.split(' ')[0]}!`}
+        title={`Welcome, ${user.name}!`}
         subtitle={`You are signed in as ${roleLabel}. Here's your overview.`}
         breadcrumbs={[{ label: 'Dashboard' }]}
       />
@@ -186,7 +201,7 @@ export default function Dashboard() {
                     <stop offset="100%" stopColor="#1976d2" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="month" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />
@@ -219,7 +234,7 @@ export default function Dashboard() {
             <Typography variant="h6" gutterBottom>Subject Performance</Typography>
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={performanceData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="subject" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />
@@ -234,7 +249,7 @@ export default function Dashboard() {
             <Typography variant="h6" gutterBottom>Fee Collection</Typography>
             <ResponsiveContainer width="100%" height={280}>
               <LineChart data={feeCollection}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="month" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />

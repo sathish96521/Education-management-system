@@ -28,7 +28,7 @@ export default function ErrorPage({ code, title, message }: ErrorPageProps) {
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
         <Box sx={{ width: 40, height: 40, borderRadius: 2, bgcolor: 'primary.main', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800 }}>
-          E
+          G
         </Box>
         <Typography variant="h5" sx={{ fontWeight: 800 }}>{APP_NAME}</Typography>
       </Box>

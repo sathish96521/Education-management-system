@@ -14,27 +14,31 @@ import {
   Stack,
   Typography,
   Chip,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
-import type { GridColDef } from '@/components/ui/types';
+import type { GridColDef, RowAction } from '@/components/ui/types';
 import EmptyState from './EmptyState';
 
-interface DataTableProps {
-  rows: Record<string, unknown>[];
-  columns: GridColDef[];
+interface DataTableProps<T extends Record<string, unknown>> {
+  rows: T[];
+  columns: GridColDef<T>[];
   searchKeys?: string[];
   title?: string;
   initialRowsPerPage?: number;
+  actions?: RowAction<T>[];
 }
 
-// Lightweight, dependency-free data table with search, sort, and pagination.
+// Lightweight, dependency-free data table with search, sort, pagination, and row actions.
 // Renders status-like string values as colored chips automatically.
-export default function DataTable({
+export default function DataTable<T extends Record<string, unknown>>({
   rows,
   columns,
   searchKeys = [],
   title,
   initialRowsPerPage = 5,
-}: DataTableProps) {
+  actions,
+}: DataTableProps<T>) {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(initialRowsPerPage);
@@ -116,12 +120,15 @@ export default function DataTable({
                   )}
                 </TableCell>
               ))}
+              {actions && actions.length > 0 && (
+                <TableCell sx={{ fontWeight: 600 }}>Actions</TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
             {paged.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} sx={{ border: 'none' }}>
+                <TableCell colSpan={columns.length + (actions?.length ? 1 : 0)} sx={{ border: 'none' }}>
                   <EmptyState title="No matching records" message="Try adjusting your search or filters." />
                 </TableCell>
               </TableRow>
@@ -141,6 +148,25 @@ export default function DataTable({
                       </TableCell>
                     );
                   })}
+                  {actions && actions.length > 0 && (
+                    <TableCell>
+                      <Stack direction="row" spacing={0.5}>
+                        {actions
+                          .filter((a) => !a.show || a.show(row))
+                          .map((action) => (
+                            <Tooltip key={action.label} title={action.label}>
+                              <IconButton
+                                size="small"
+                                color={action.color ?? 'default'}
+                                onClick={() => action.onClick(row)}
+                              >
+                                {action.icon}
+                              </IconButton>
+                            </Tooltip>
+                          ))}
+                      </Stack>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))
             )}

@@ -11,10 +11,11 @@ import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 interface NavbarProps {
   onMenuClick: () => void;
+  sidebarWidth?: number;
 }
 
 // Top app bar with theme toggle, notifications, and user menu.
-export default function Navbar({ onMenuClick }: NavbarProps) {
+export default function Navbar({ onMenuClick, sidebarWidth = 260 }: NavbarProps) {
   const theme = useTheme();
   const isDesktop = useMediaQuery(theme.breakpoints.up('md'));
   const dispatch = useAppDispatch();
@@ -37,20 +38,19 @@ export default function Navbar({ onMenuClick }: NavbarProps) {
       <AppBar
         position="fixed"
         sx={{
-          width: { md: `calc(100% - 260px)` },
-          ml: { md: '260px' },
+          width: { md: `calc(100% - ${sidebarWidth}px)` },
+          ml: { md: `${sidebarWidth}px` },
           bgcolor: 'background.paper',
           color: 'text.primary',
           borderBottom: '1px solid',
           borderColor: 'divider',
+          transition: 'width 0.25s ease, margin-left 0.25s ease',
         }}
       >
         <Toolbar sx={{ gap: 1 }}>
-          {!isDesktop && (
-            <IconButton edge="start" onClick={onMenuClick}>
-              <MenuIcon />
-            </IconButton>
-          )}
+          <IconButton edge="start" onClick={onMenuClick}>
+            <MenuIcon />
+          </IconButton>
           <Box sx={{ flexGrow: 1 }} />
           <IconButton onClick={() => dispatch(toggleTheme())} color="inherit">
             {mode === 'light' ? <DarkMode /> : <LightMode />}

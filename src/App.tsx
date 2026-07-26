@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { useAppSelector } from '@/hooks/useRedux';
@@ -9,72 +10,84 @@ import AuthLayout from '@/components/layout/AuthLayout';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 import ProtectedRoute from '@/routes/ProtectedRoute';
 import ToastContainer from '@/components/ui/ToastContainer';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
+import PageSkeleton from '@/components/ui/PageSkeleton';
+import { useSessionExpiry } from '@/hooks/useSessionExpiry';
 
-import Login from '@/features/auth/Login';
-import ForgotPassword from '@/features/auth/ForgotPassword';
-import ResetPassword from '@/features/auth/ResetPassword';
-import Dashboard from '@/features/dashboard/Dashboard';
-import Students from '@/features/students/Students';
-import Teachers from '@/features/teachers/Teachers';
-import Staff from '@/features/staff/Staff';
-import Parents from '@/features/parents/Parents';
-import Classes from '@/features/classes/Classes';
-import Attendance from '@/features/attendance/Attendance';
-import Timetable from '@/features/timetable/Timetable';
-import Homework from '@/features/homework/Homework';
-import Exams from '@/features/exams/Exams';
-import Fees from '@/features/fees/Fees';
-import Notifications from '@/features/notifications/Notifications';
-import Reports from '@/features/reports/Reports';
-import Profile from '@/features/profile/Profile';
-import Settings from '@/features/settings/Settings';
-import Forbidden from '@/features/errors/Forbidden';
-import NotFound from '@/features/errors/NotFound';
-import ServerError from '@/features/errors/ServerError';
+// Lazy-loaded route components — code-split by route.
+const Login = lazy(() => import('@/features/auth/Login'));
+const ForgotPassword = lazy(() => import('@/features/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('@/features/auth/ResetPassword'));
+const Dashboard = lazy(() => import('@/features/dashboard/Dashboard'));
+const Students = lazy(() => import('@/features/students/Students'));
+const StudentDetail = lazy(() => import('@/features/students/StudentDetail'));
+const Teachers = lazy(() => import('@/features/teachers/Teachers'));
+const Staff = lazy(() => import('@/features/staff/Staff'));
+const Parents = lazy(() => import('@/features/parents/Parents'));
+const Classes = lazy(() => import('@/features/classes/Classes'));
+const Attendance = lazy(() => import('@/features/attendance/Attendance'));
+const Timetable = lazy(() => import('@/features/timetable/Timetable'));
+const Homework = lazy(() => import('@/features/homework/Homework'));
+const Exams = lazy(() => import('@/features/exams/Exams'));
+const Fees = lazy(() => import('@/features/fees/Fees'));
+const Notifications = lazy(() => import('@/features/notifications/Notifications'));
+const Reports = lazy(() => import('@/features/reports/Reports'));
+const Profile = lazy(() => import('@/features/profile/Profile'));
+const Settings = lazy(() => import('@/features/settings/Settings'));
+const Forbidden = lazy(() => import('@/features/errors/Forbidden'));
+const NotFound = lazy(() => import('@/features/errors/NotFound'));
+const ServerError = lazy(() => import('@/features/errors/ServerError'));
 
 function ThemedApp() {
   const mode = useAppSelector((s) => s.theme.mode);
+  useSessionExpiry();
+
   return (
     <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
       <CssBaseline />
       <BrowserRouter>
-        <Routes>
-          {/* Public auth routes */}
-          <Route element={<AuthLayout />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-          </Route>
+        <ErrorBoundary>
+          <Suspense fallback={<PageSkeleton />}>
+            <Routes>
+              {/* Public auth routes */}
+              <Route element={<AuthLayout />}>
+                <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
+              </Route>
 
-          {/* Protected dashboard routes — auth guard wraps the layout */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<DashboardLayout />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/students" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher', 'staff']}><Students /></ProtectedRoute>} />
-              <Route path="/teachers" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Teachers /></ProtectedRoute>} />
-              <Route path="/staff" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Staff /></ProtectedRoute>} />
-              <Route path="/parents" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher']}><Parents /></ProtectedRoute>} />
-              <Route path="/classes" element={<Classes />} />
-              <Route path="/attendance" element={<Attendance />} />
-              <Route path="/timetable" element={<Timetable />} />
-              <Route path="/homework" element={<Homework />} />
-              <Route path="/exams" element={<Exams />} />
-              <Route path="/fees" element={<Fees />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/reports" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Reports /></ProtectedRoute>} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/settings" element={<Settings />} />
-            </Route>
-          </Route>
+              {/* Protected dashboard routes — auth guard wraps the layout */}
+              <Route element={<ProtectedRoute />}>
+                <Route element={<DashboardLayout />}>
+                  <Route path="/dashboard" element={<Dashboard />} />
+                  <Route path="/students" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher', 'staff']}><Students /></ProtectedRoute>} />
+                  <Route path="/students/:id" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher', 'staff']}><StudentDetail /></ProtectedRoute>} />
+                  <Route path="/teachers" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Teachers /></ProtectedRoute>} />
+                  <Route path="/staff" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Staff /></ProtectedRoute>} />
+                  <Route path="/parents" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher']}><Parents /></ProtectedRoute>} />
+                  <Route path="/classes" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher', 'student', 'parent']}><Classes /></ProtectedRoute>} />
+                  <Route path="/attendance" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal', 'teacher', 'student', 'parent']}><Attendance /></ProtectedRoute>} />
+                  <Route path="/timetable" element={<Timetable />} />
+                  <Route path="/homework" element={<Homework />} />
+                  <Route path="/exams" element={<Exams />} />
+                  <Route path="/fees" element={<Fees />} />
+                  <Route path="/notifications" element={<Notifications />} />
+                  <Route path="/reports" element={<ProtectedRoute allowedRoles={['super_admin', 'admin', 'principal']}><Reports /></ProtectedRoute>} />
+                  <Route path="/profile" element={<Profile />} />
+                  <Route path="/settings" element={<Settings />} />
+                </Route>
+              </Route>
 
-          {/* Error pages */}
-          <Route path="/403" element={<Forbidden />} />
-          <Route path="/500" element={<ServerError />} />
-          <Route path="*" element={<NotFound />} />
+              {/* Error pages */}
+              <Route path="/403" element={<Forbidden />} />
+              <Route path="/500" element={<ServerError />} />
+              <Route path="*" element={<NotFound />} />
 
-          {/* Default redirect */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
+              {/* Default redirect */}
+              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </BrowserRouter>
       <ToastContainer />
     </ThemeProvider>

@@ -1,4 +1,4 @@
-# EduSphere — Education Management System (EMS)
+# GoSchool — Education Management System (EMS)
 
 A modern, responsive, role-based Education Management System frontend built with React, TypeScript, and Material UI. This is a **frontend-only** implementation using mock JSON data — no backend, APIs, or database logic is included.
 
@@ -47,6 +47,7 @@ Each role gets a tailored dashboard and navigation:
 - Error Pages (403, 404, 500)
 
 ### UI / UX
+- **Collapsible sidebar** with hamburger toggle (expanded with labels / collapsed icons-only)
 - Light & Dark theme toggle (persisted to localStorage)
 - Fully responsive (desktop, tablet, mobile)
 - Reusable generic DataTable with search, sort, pagination, and row actions
@@ -57,6 +58,7 @@ Each role gets a tailored dashboard and navigation:
 - Toast notifications
 - Breadcrumb navigation with clickable links
 - Dashboard cards and charts (Recharts, theme-aware colors)
+- Personalized welcome message with full user name on dashboard
 - Consistent color palette and typography (Inter font)
 - Error boundary for graceful crash recovery
 

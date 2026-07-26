@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { Parent } from '@/types';
 import { parentService } from '@/services/parentService';
+import { dynamicUsers } from '@/data/mockData';
 
 interface ParentState {
   items: Parent[];
@@ -52,6 +53,19 @@ const parentSlice = createSlice({
       })
       .addCase(addParent.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        // Register as a loginable user with default password "password"
+        dynamicUsers.push({
+          email: action.payload.email,
+          password: 'password',
+          user: {
+            id: action.payload.id,
+            name: action.payload.name,
+            email: action.payload.email,
+            role: 'parent',
+            designation: `Parent of ${action.payload.studentName}`,
+            phone: action.payload.phone,
+          },
+        });
       })
       .addCase(editParent.fulfilled, (state, action) => {
         const idx = state.items.findIndex((p) => p.id === action.payload.id);

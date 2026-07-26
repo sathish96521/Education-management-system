@@ -1,4 +1,4 @@
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Grid, Box } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, MenuItem, Grid, Box, Alert } from '@mui/material';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -42,6 +42,11 @@ export default function StudentFormModal({ open, onClose, onSubmit, initialData 
       <DialogTitle sx={{ fontWeight: 600 }}>{isEdit ? 'Edit Student' : 'Add Student'}</DialogTitle>
       <Box component="form" onSubmit={handleSubmit((data) => { onSubmit(data); handleClose(); })} noValidate>
         <DialogContent>
+          {!isEdit && (
+            <Alert severity="info" sx={{ mb: 2 }}>
+              This student can log in after being added using their email and the default password: <strong>password</strong>
+            </Alert>
+          )}
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6 }}>
               <TextField fullWidth label="Roll No" error={!!errors.rollNo} helperText={errors.rollNo?.message} {...register('rollNo')} />

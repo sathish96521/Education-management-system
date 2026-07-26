@@ -133,3 +133,9 @@ export const DEMO_CREDENTIALS = [
   { email: 'aarav@edu.com', password: 'password', role: 'student' as const },
   { email: 'rajesh@parent.com', password: 'password', role: 'parent' as const },
 ];
+
+// Dynamic user registry — users created via the UI are registered here so they
+// can immediately log in with the default password "password".
+// Resets on page refresh (no backend persistence).
+import type { User } from '@/types';
+export const dynamicUsers: { email: string; password: string; user: User }[] = [];

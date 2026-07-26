@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { Teacher } from '@/types';
 import { teacherService } from '@/services/teacherService';
+import { dynamicUsers } from '@/data/mockData';
 
 interface TeacherState {
   items: Teacher[];
@@ -52,6 +53,19 @@ const teacherSlice = createSlice({
       })
       .addCase(addTeacher.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        // Register as a loginable user with default password "password"
+        dynamicUsers.push({
+          email: action.payload.email,
+          password: 'password',
+          user: {
+            id: action.payload.id,
+            name: action.payload.name,
+            email: action.payload.email,
+            role: 'teacher',
+            designation: `${action.payload.subject} Teacher`,
+            phone: action.payload.phone,
+          },
+        });
       })
       .addCase(editTeacher.fulfilled, (state, action) => {
         const idx = state.items.findIndex((t) => t.id === action.payload.id);

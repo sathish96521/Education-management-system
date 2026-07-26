@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from '@reduxjs/toolkit';
 import type { Role, User } from '@/types';
-import { mockUsers, DEMO_CREDENTIALS } from '@/data/mockData';
+import { mockUsers, DEMO_CREDENTIALS, dynamicUsers } from '@/data/mockData';
 import { STORAGE_KEYS } from '@/constants/app';
 
 const SESSION_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes
@@ -55,11 +55,24 @@ export const loginAsync = createAsyncThunk<
 >('auth/login', async ({ email, password }, { rejectWithValue }) => {
   // Simulate async API call
   await new Promise((resolve) => setTimeout(resolve, 500));
+
+  // Check built-in demo credentials
   const match = DEMO_CREDENTIALS.find(
     (c) => c.email.toLowerCase() === email.toLowerCase() && c.password === password
   );
-  if (!match) return rejectWithValue('Invalid email or password');
-  const user = { ...mockUsers[match.role], email } as User;
+  if (match) {
+    const user = { ...mockUsers[match.role], email } as User;
+    const token = 'mock-jwt-' + user.id;
+    const expiresAt = Date.now() + SESSION_TIMEOUT_MS;
+    return { user, token, expiresAt };
+  }
+
+  // Check dynamically registered users (created via UI)
+  const dynamicMatch = dynamicUsers.find(
+    (c) => c.email.toLowerCase() === email.toLowerCase() && c.password === password
+  );
+  if (!dynamicMatch) return rejectWithValue('Invalid email or password');
+  const user = dynamicMatch.user;
   const token = 'mock-jwt-' + user.id;
   const expiresAt = Date.now() + SESSION_TIMEOUT_MS;
   return { user, token, expiresAt };

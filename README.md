@@ -66,6 +66,7 @@ Each role gets a tailored dashboard and navigation:
 - **Lazy-loaded routes** — every route component is code-split via `React.lazy()` + `Suspense`
 - **API service layer** — `src/services/` with async CRUD functions (swap with real API calls later)
 - **Per-module Redux slices** — Students, Teachers, Staff, Parents each have their own slice with `createAsyncThunk` CRUD
+- **Dynamic user registry** — users created via the UI (Add Student/Teacher/Staff/Parent) are instantly loginable with password `password`
 - **Session expiry** — 30-minute auto-logout with activity-based session refresh
 - **Error boundary** — wraps the dashboard layout to catch rendering errors gracefully
 - **Generic DataTable** — typed `GridColDef<T>` and `RowAction<T>` eliminate unsafe casts

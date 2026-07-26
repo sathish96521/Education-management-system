@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import type { Staff } from '@/types';
 import { staffService } from '@/services/staffService';
+import { dynamicUsers } from '@/data/mockData';
 
 interface StaffState {
   items: Staff[];
@@ -52,6 +53,19 @@ const staffSlice = createSlice({
       })
       .addCase(addStaff.fulfilled, (state, action) => {
         state.items.push(action.payload);
+        // Register as a loginable user with default password "password"
+        dynamicUsers.push({
+          email: action.payload.email,
+          password: 'password',
+          user: {
+            id: action.payload.id,
+            name: action.payload.name,
+            email: action.payload.email,
+            role: 'staff',
+            designation: `${action.payload.role} — ${action.payload.department}`,
+            phone: action.payload.phone,
+          },
+        });
       })
       .addCase(editStaff.fulfilled, (state, action) => {
         const idx = state.items.findIndex((s) => s.id === action.payload.id);

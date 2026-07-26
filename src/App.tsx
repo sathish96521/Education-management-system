@@ -38,14 +38,19 @@ const Forbidden = lazy(() => import('@/features/errors/Forbidden'));
 const NotFound = lazy(() => import('@/features/errors/NotFound'));
 const ServerError = lazy(() => import('@/features/errors/ServerError'));
 
+function SessionExpiryWatcher() {
+  useSessionExpiry();
+  return null;
+}
+
 function ThemedApp() {
   const mode = useAppSelector((s) => s.theme.mode);
-  useSessionExpiry();
 
   return (
     <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>
       <CssBaseline />
       <BrowserRouter>
+        <SessionExpiryWatcher />
         <ErrorBoundary>
           <Suspense fallback={<PageSkeleton />}>
             <Routes>

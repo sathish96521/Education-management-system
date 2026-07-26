@@ -4,6 +4,7 @@ import { Outlet } from 'react-router-dom';
 import Navbar from './Navbar';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
+import ErrorBoundary from '@/components/ui/ErrorBoundary';
 
 // Main authenticated layout: responsive sidebar + navbar + content + footer.
 // Uses Outlet so nested <Route> children render inside the content area.
@@ -23,7 +24,9 @@ export default function DashboardLayout() {
         <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 3 }, pt: { xs: 2, md: 3 } }}>
           <Toolbar />
           <Container maxWidth="xl" disableGutters>
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </Container>
         </Box>
         <Footer />

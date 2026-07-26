@@ -1,4 +1,4 @@
-import { Box, Card, Typography, Grid, Button } from '@mui/material';
+import { Box, Card, Typography, Grid, Button, useTheme } from '@mui/material';
 import { Download } from '@mui/icons-material';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -8,6 +8,17 @@ import PageHeader from '@/components/ui/PageHeader';
 import StatCard from '@/components/ui/StatCard';
 import { useToast } from '@/hooks/useToast';
 import { School, Person4, Payments, FactCheck } from '@mui/icons-material';
+import { mockStudents, mockTeachers, mockFees, mockAttendance } from '@/data/mockData';
+
+const totalStudents = mockStudents.length;
+const totalTeachers = mockTeachers.length;
+const totalFeePaid = mockFees.reduce((s, f) => s + f.paidAmount, 0);
+const avgAttendance = mockAttendance.length > 0
+  ? Math.round((mockAttendance.filter((a) => a.status === 'Present').length / mockAttendance.length) * 100)
+  : 0;
+
+const maleCount = mockStudents.filter((s) => s.gender === 'Male').length;
+const femaleCount = mockStudents.filter((s) => s.gender === 'Female').length;
 
 const gradeDistribution = [
   { grade: 'A+', count: 45 },
@@ -25,12 +36,14 @@ const monthlyAttendance = [
 ];
 
 const genderSplit = [
-  { name: 'Male', value: 290, color: '#1976d2' },
-  { name: 'Female', value: 250, color: '#00897b' },
+  { name: 'Male', value: maleCount, color: '#1976d2' },
+  { name: 'Female', value: femaleCount, color: '#00897b' },
 ];
 
 export default function Reports() {
   const toast = useToast();
+  const theme = useTheme();
+  const gridColor = theme.palette.mode === 'dark' ? '#334155' : '#eee';
   return (
     <Box>
       <PageHeader
@@ -45,16 +58,16 @@ export default function Reports() {
       />
       <Grid container spacing={2} sx={{ mb: 3 }}>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard title="Total Students" value="540" icon={<School />} color="#1976d2" trend={8} />
+          <StatCard title="Total Students" value={String(totalStudents)} icon={<School />} color="#1976d2" trend={8} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard title="Total Teachers" value="38" icon={<Person4 />} color="#00897b" trend={4} />
+          <StatCard title="Total Teachers" value={String(totalTeachers)} icon={<Person4 />} color="#00897b" trend={4} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard title="Fee Collected" value="$62K" icon={<Payments />} color="#2e7d32" trend={15} />
+          <StatCard title="Fee Collected" value={`$${(totalFeePaid / 1000).toFixed(0)}K`} icon={<Payments />} color="#2e7d32" trend={15} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 3 }}>
-          <StatCard title="Avg Attendance" value="92%" icon={<FactCheck />} color="#f57c00" trend={2} />
+          <StatCard title="Avg Attendance" value={`${avgAttendance}%`} icon={<FactCheck />} color="#f57c00" trend={2} />
         </Grid>
       </Grid>
 
@@ -64,7 +77,7 @@ export default function Reports() {
             <Typography variant="h6" gutterBottom>Grade Distribution</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <BarChart data={gradeDistribution}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="grade" fontSize={12} />
                 <YAxis fontSize={12} />
                 <Tooltip />
@@ -92,7 +105,7 @@ export default function Reports() {
             <Typography variant="h6" gutterBottom>Monthly Attendance Rate</Typography>
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={monthlyAttendance}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#eee" />
+                <CartesianGrid strokeDasharray="3 3" stroke={gridColor} />
                 <XAxis dataKey="month" fontSize={12} />
                 <YAxis fontSize={12} domain={[80, 100]} />
                 <Tooltip />

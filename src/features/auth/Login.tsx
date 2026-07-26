@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { mockLogin } from '@/store/authSlice';
+import { loginAsync } from '@/store/authSlice';
 import { useToast } from '@/hooks/useToast';
 import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { DEMO_CREDENTIALS } from '@/data/mockData';
@@ -32,17 +32,17 @@ export default function Login() {
     defaultValues: { email: '', password: '' },
   });
 
-  const onSubmit = (data: LoginForm) => {
-    const success = mockLogin(data.email, data.password)(dispatch);
-    if (success) {
+  const onSubmit = async (data: LoginForm) => {
+    const result = await dispatch(loginAsync({ email: data.email, password: data.password }));
+    if (loginAsync.fulfilled.match(result)) {
       toast.success('Welcome back! Login successful.');
       navigate('/dashboard');
     }
   };
 
-  const quickLogin = (email: string) => {
-    const success = mockLogin(email, 'password')(dispatch);
-    if (success) {
+  const quickLogin = async (email: string) => {
+    const result = await dispatch(loginAsync({ email, password: 'password' }));
+    if (loginAsync.fulfilled.match(result)) {
       toast.success('Logged in as demo user.');
       navigate('/dashboard');
     }

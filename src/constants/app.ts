@@ -17,6 +17,7 @@ export const STORAGE_KEYS = {
   TOKEN: 'ems_token',
   USER: 'ems_user',
   THEME: 'ems_theme',
+  SESSION_EXPIRES: 'ems_session_expires',
 } as const;
 
 // Brand color palette - professional blue/teal scheme

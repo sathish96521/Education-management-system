@@ -49,9 +49,6 @@
     "vite": "^5.4.2",
     "vitest": "^2.1.8"
   },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.9.0"
-  },
   "overrides": {
     "@vitest/mocker": {
       "vite": "$vite"
